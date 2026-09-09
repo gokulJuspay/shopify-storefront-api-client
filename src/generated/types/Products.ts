@@ -542,17 +542,17 @@ export type ProductOptionValueSwatch = {
    */
   color: string | null;
   /**
-   * @description Swatch image
-   * @type { Image }
+   * @description Swatch media; the image URL is on previewImage
+   * @type { Media }
    * @memberof ProductOptionValueSwatch
    */
-  image: Image | null;
+  image: Media | null;
 };
 
 export function decodeProductOptionValueSwatch(rawInput: unknown): ProductOptionValueSwatch | null {
   if (isJSON(rawInput)) {
     const decodedColor = decodeString(rawInput["color"]);
-    const decodedImage = decodeImage(rawInput["image"]);
+    const decodedImage = decodeMedia(rawInput["image"]);
 
     return {
       color: decodedColor,

@@ -1,4 +1,5 @@
 import { MONEY_FRAGMENT, IMAGE_FRAGMENT } from "./fragments";
+import { PRODUCT_VARIANT_FRAGMENT } from "./product";
 
 // Collection-specific fragments
 export const COLLECTION_FRAGMENT: string = `
@@ -124,7 +125,8 @@ export const GET_COLLECTION_WITH_PRODUCTS: string = `
     $reverse: Boolean
     $sortKey: ProductCollectionSortKeys
     $filters: [ProductFilter!]
-  ) {
+    $country: CountryCode
+  ) @inContext(country: $country) {
     collection(id: $id, handle: $handle) {
       ...CollectionFields
       products(
@@ -190,6 +192,123 @@ export const GET_COLLECTIONS: string = `
         hasPreviousPage
         startCursor
         endCursor
+      }
+    }
+  }
+`;
+
+export const COLLECTION_PRODUCT_WITH_OPTIONS_FRAGMENT: string = `
+  fragment ProductWithOptionsFields on Product {
+    id
+    handle
+    title
+    description
+    vendor
+    productType
+    tags
+    availableForSale
+    seo {
+      title
+      description
+    }
+    priceRange {
+      minVariantPrice {
+        ...MoneyFields
+      }
+      maxVariantPrice {
+        ...MoneyFields
+      }
+    }
+    compareAtPriceRange {
+      minVariantPrice {
+        ...MoneyFields
+      }
+      maxVariantPrice {
+        ...MoneyFields
+      }
+    }
+    featuredImage {
+      ...ImageFields
+    }
+    options {
+      id
+      name
+      optionValues {
+        id
+        name
+        swatch {
+          color
+          image {
+            id
+            mediaContentType
+            previewImage {
+              ...ImageFields
+            }
+          }
+        }
+      }
+    }
+    variants(first: $variantsFirst) {
+      nodes {
+        ...ProductVariantFields
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+`;
+
+export const GET_COLLECTIONS_BY_IDS_WITH_PRODUCTS: string = `
+  ${MONEY_FRAGMENT}
+  ${IMAGE_FRAGMENT}
+  ${COLLECTION_FRAGMENT}
+  ${PRODUCT_VARIANT_FRAGMENT}
+  ${COLLECTION_PRODUCT_WITH_OPTIONS_FRAGMENT}
+  query GetCollectionsByIdsWithProducts(
+    $ids: [ID!]!
+    $first: Int
+    $variantsFirst: Int
+    $country: CountryCode
+  ) @inContext(country: $country) {
+    nodes(ids: $ids) {
+      ... on Collection {
+        ...CollectionFields
+        products(first: $first) {
+          nodes {
+            ...ProductWithOptionsFields
+          }
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCT_COLLECTIONS: string = `
+  ${IMAGE_FRAGMENT}
+  ${COLLECTION_FRAGMENT}
+  query GetProductCollections($id: ID!, $first: Int) {
+    product(id: $id) {
+      id
+      collections(first: $first) {
+        nodes {
+          ...CollectionFields
+        }
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
       }
     }
   }

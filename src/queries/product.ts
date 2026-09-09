@@ -154,11 +154,25 @@ export const GET_PRODUCTS: string = `
   }
 `;
 
+export const GET_PRODUCTS_BY_IDS: string = `
+  ${MONEY_FRAGMENT}
+  ${IMAGE_FRAGMENT}
+  ${PRODUCT_VARIANT_FRAGMENT}
+  ${PRODUCT_FRAGMENT}
+  query GetProductsByIds($ids: [ID!]!, $country: CountryCode) @inContext(country: $country) {
+    nodes(ids: $ids) {
+      ... on Product {
+        ...ProductFields
+      }
+    }
+  }
+`;
+
 export const GET_PRODUCT_VARIANTS: string = `
   ${MONEY_FRAGMENT}
   ${IMAGE_FRAGMENT}
   ${PRODUCT_VARIANT_FRAGMENT}
-  query GetProductVariants($ids: [ID!]!) {
+  query GetProductVariants($ids: [ID!]!, $country: CountryCode) @inContext(country: $country) {
     nodes(ids: $ids) {
       ... on ProductVariant {
         ...ProductVariantFields

@@ -142,6 +142,29 @@ export function decodeProductRecommendationsResponse(
 }
 
 /**
+ * @type { ProductsByIdsResponse }
+ * @description GraphQL response containing products resolved by ID via the nodes query
+ */
+export type ProductsByIdsResponse = {
+  /**
+   * @type { Product[] }
+   * @memberof ProductsByIdsResponse
+   */
+  nodes: Product[] | null;
+};
+
+export function decodeProductsByIdsResponse(rawInput: unknown): ProductsByIdsResponse | null {
+  if (isJSON(rawInput)) {
+    const decodedNodes = decodeArray(rawInput["nodes"], decodeProduct);
+
+    return {
+      nodes: decodedNodes,
+    };
+  }
+  return null;
+}
+
+/**
  * @type { ProductVariantsResponse }
  * @description GraphQL response containing product variants resolved by ID
  */
@@ -205,6 +228,88 @@ export function decodeCollectionsResponse(rawInput: unknown): CollectionsRespons
 
     return {
       collections: decodedCollections,
+    };
+  }
+  return null;
+}
+
+/**
+ * @type { CollectionsByIdsResponse }
+ * @description GraphQL response containing collections resolved by ID via the nodes query
+ */
+export type CollectionsByIdsResponse = {
+  /**
+   * @type { Collection[] }
+   * @memberof CollectionsByIdsResponse
+   */
+  nodes: Collection[] | null;
+};
+
+export function decodeCollectionsByIdsResponse(rawInput: unknown): CollectionsByIdsResponse | null {
+  if (isJSON(rawInput)) {
+    const decodedNodes = decodeArray(rawInput["nodes"], decodeCollection);
+
+    return {
+      nodes: decodedNodes,
+    };
+  }
+  return null;
+}
+
+/**
+ * @type { ProductCollections }
+ * @description A product with the collections it belongs to
+ */
+export type ProductCollections = {
+  /**
+   * @type { string }
+   * @memberof ProductCollections
+   */
+  id: string;
+  /**
+   * @type { CollectionConnection }
+   * @memberof ProductCollections
+   */
+  collections: CollectionConnection;
+};
+
+export function decodeProductCollections(rawInput: unknown): ProductCollections | null {
+  if (isJSON(rawInput)) {
+    const decodedId = decodeString(rawInput["id"]);
+    const decodedCollections = decodeCollectionConnection(rawInput["collections"]);
+
+    if (decodedId === null || decodedCollections === null) {
+      return null;
+    }
+
+    return {
+      id: decodedId,
+      collections: decodedCollections,
+    };
+  }
+  return null;
+}
+
+/**
+ * @type { ProductCollectionsResponse }
+ * @description GraphQL response containing the collections of a product
+ */
+export type ProductCollectionsResponse = {
+  /**
+   * @type { ProductCollections }
+   * @memberof ProductCollectionsResponse
+   */
+  product: ProductCollections | null;
+};
+
+export function decodeProductCollectionsResponse(
+  rawInput: unknown
+): ProductCollectionsResponse | null {
+  if (isJSON(rawInput)) {
+    const decodedProduct = decodeProductCollections(rawInput["product"]);
+
+    return {
+      product: decodedProduct,
     };
   }
   return null;

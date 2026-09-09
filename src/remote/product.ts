@@ -11,11 +11,13 @@ import {
   decodeProductsResponse,
   decodeProductRecommendationsResponse,
   decodeProductVariantsResponse,
+  decodeProductsByIdsResponse,
 } from "../generated/types";
 import {
   GET_PRODUCT_BY_ID,
   GET_PRODUCT_BY_HANDLE,
   GET_PRODUCTS,
+  GET_PRODUCTS_BY_IDS,
   GET_PRODUCT_VARIANTS,
   GET_PRODUCT_RECOMMENDATIONS,
 } from "../queries";
@@ -57,10 +59,21 @@ export function createProductApi(executor: Executor): ProductApi {
       );
     },
 
-    getVariantsByIds(ids: string[]): Promise<APIResponse<ProductVariant[], StorefrontError[]>> {
+    getByIds(ids: string[], country?: string): Promise<APIResponse<Product[], StorefrontError[]>> {
+      return executor.execute(
+        GET_PRODUCTS_BY_IDS,
+        { ids, country },
+        (data) => decodeProductsByIdsResponse(data)?.nodes ?? null
+      );
+    },
+
+    getVariantsByIds(
+      ids: string[],
+      country?: string
+    ): Promise<APIResponse<ProductVariant[], StorefrontError[]>> {
       return executor.execute(
         GET_PRODUCT_VARIANTS,
-        { ids },
+        { ids, country },
         (data) => decodeProductVariantsResponse(data)?.nodes ?? null
       );
     },
@@ -83,7 +96,11 @@ export type ProductApi = {
   getMany: (
     args?: Partial<GetProductsArgs>
   ) => Promise<APIResponse<ProductConnection, StorefrontError[]>>;
-  getVariantsByIds: (ids: string[]) => Promise<APIResponse<ProductVariant[], StorefrontError[]>>;
+  getByIds: (ids: string[], country?: string) => Promise<APIResponse<Product[], StorefrontError[]>>;
+  getVariantsByIds: (
+    ids: string[],
+    country?: string
+  ) => Promise<APIResponse<ProductVariant[], StorefrontError[]>>;
   getRecommendations: (
     args: GetProductRecommendationsArgs
   ) => Promise<APIResponse<Product[], StorefrontError[]>>;

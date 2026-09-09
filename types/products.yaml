@@ -215,8 +215,8 @@ Products:
         type: string
         description: 'Color hex code'
       image:
-        $ref: './types/common.yaml#/Common/Image'
-        description: 'Swatch image'
+        $ref: './types/products.yaml#/Products/Media'
+        description: 'Swatch media; the image URL is on previewImage'
 
   ProductVariant:
     type: object

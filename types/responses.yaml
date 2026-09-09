@@ -26,6 +26,15 @@ Responses:
         items:
           $ref: './types/products.yaml#/Products/Product'
 
+  ProductsByIdsResponse:
+    type: object
+    description: 'GraphQL response containing products resolved by ID via the nodes query'
+    properties:
+      nodes:
+        type: array
+        items:
+          $ref: './types/products.yaml#/Products/Product'
+
   ProductVariantsResponse:
     type: object
     description: 'GraphQL response containing product variants resolved by ID'
@@ -49,6 +58,34 @@ Responses:
     properties:
       collections:
         $ref: './types/collections.yaml#/Collections/CollectionConnection'
+
+  CollectionsByIdsResponse:
+    type: object
+    description: 'GraphQL response containing collections resolved by ID via the nodes query'
+    properties:
+      nodes:
+        type: array
+        items:
+          $ref: './types/collections.yaml#/Collections/Collection'
+
+  ProductCollections:
+    type: object
+    description: 'A product with the collections it belongs to'
+    required:
+      - id
+      - collections
+    properties:
+      id:
+        type: string
+      collections:
+        $ref: './types/collections.yaml#/Collections/CollectionConnection'
+
+  ProductCollectionsResponse:
+    type: object
+    description: 'GraphQL response containing the collections of a product'
+    properties:
+      product:
+        $ref: './types/responses.yaml#/Responses/ProductCollections'
 
   # Cart responses
   CartResponse:
